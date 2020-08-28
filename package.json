@@ -1,5 +1,5 @@
 {
-  "name": "AsteroidsGame",
+  "name": "asteroidsgame",
   "version": "0.0.1",
   "description": "My take on classic Asteroids using Phaser3.",
   "main": "index.js",
