@@ -1,5 +1,5 @@
 # AsteroidsGame
-
+An Asteroids clone created with Phaser3.
 
 ## How To Start
 
@@ -21,3 +21,17 @@ $ npm run start
 
 ```
 '''
+
+## Controls
+
+UP : Thrust
+LEFT/RIGHT : Steer
+SPACE : Shoot
+
+### Power-Ups
+
+Power-Ups appear every 20 seconds.
+
+Quantum Bullets : Destroys any asteroid without splitting it, but reduces fire rate.
+Quick Bullets : Increases fire rate .
+Triple Bullets : Fire 3 bullets simultaneously.
