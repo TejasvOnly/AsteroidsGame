@@ -4,6 +4,7 @@
   "description": "My take on classic Asteroids using Phaser3.",
   "main": "index.js",
   "scripts": {
+    "start": "parcel src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,14 +16,14 @@
   "license": "ISC",
   "dependencies": {
     "phaser": "^3.24.1"
-},
-"devDependencies": {
+  },
+  "devDependencies": {
     "parcel-plugin-static-files-copy": "^2.5.0"
-},
-"staticFiles": {
+  },
+  "staticFiles": {
     "staticPath": "public",
     "watcherGlob": "**"
-},
+  },
   "bugs": {
     "url": "https://github.com/TejasvOnly/AsteroidsGame/issues"
   },
