@@ -673,6 +673,7 @@ export default class GameScene extends Phaser.Scene{
             this.deathParticles.emitParticleAt(this.player.x,this.player.y,3);
             this.time.delayedCall(1000 * shipProperties.timeToReset, this.shipReset,[],this);
         } else {
+            this.deathParticles.emitParticleAt(this.player.x,this.player.y,3);
             this.time.delayedCall(1000 * shipProperties.timeToReset, this.endGame,[],this);
         }
     }
