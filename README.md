@@ -8,7 +8,7 @@ To clone and run this game, you'll need [Git](https://git-scm.com) and [Node.js]
 
 ```bash
 # Clone this repository
-$ git clone depth 1 https://github.com/TejasvOnly/AsteroidsGame.git asteroids-game
+$ git clone --depth 1 https://github.com/TejasvOnly/AsteroidsGame.git asteroids-game
 
 # Go into the repository
 $ cd asteroids-game
