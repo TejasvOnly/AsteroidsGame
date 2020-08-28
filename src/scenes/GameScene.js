@@ -57,9 +57,9 @@ const asteroidProperties = {
     maxAsteroids: 20,
     incrementAsteroids: 2,
     
-    asteroidLarge: { minVelocity: 50, maxVelocity: 150, minAngularVelocity: 0, maxAngularVelocity: 200, score: 20, nextSize: graphicAssets.asteroidMedium.name, pieces: 2, explosion:8 },
-    asteroidMedium: { minVelocity: 50, maxVelocity: 200, minAngularVelocity: 0, maxAngularVelocity: 200, score: 50, nextSize: graphicAssets.asteroidSmall.name, pieces: 2, explosion:4 },
-    asteroidSmall: { minVelocity: 50, maxVelocity: 300, minAngularVelocity: 0, maxAngularVelocity: 200, score: 100, explosion:2 }, 
+    asteroidLarge: { minVelocity: 50, maxVelocity: 150, minAngularVelocity: 0, maxAngularVelocity: 200, score: 20,qScore:600, nextSize: graphicAssets.asteroidMedium.name, pieces: 2, explosion:8 },
+    asteroidMedium: { minVelocity: 50, maxVelocity: 200, minAngularVelocity: 0, maxAngularVelocity: 200, score: 50,qScore:300, nextSize: graphicAssets.asteroidSmall.name, pieces: 2, explosion:4 },
+    asteroidSmall: { minVelocity: 50, maxVelocity: 300, minAngularVelocity: 0, maxAngularVelocity: 200, score: 100,qScore:150, explosion:2 }, 
 };
 
 
@@ -414,8 +414,10 @@ export default class GameScene extends Phaser.Scene{
         asteroid.destroy();
         if(this.powerup!=powerupType.quantum){
             this.splitAsteroid(asteroid);
+            this.updateScore(asteroidProperties[asteroid.texture.key].score);
+        }else{
+            this.updateScore(asteroidProperties[asteroid.texture.key].qScore);
         }
-        this.updateScore(asteroidProperties[asteroid.texture.key].score);
 
         if (!this.asteroidGroup.countActive()) {
             this.time.delayedCall(1000 * 3, this.nextLevel,[],this);
