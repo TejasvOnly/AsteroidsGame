@@ -83,10 +83,10 @@ export default class MainMenu extends Phaser.Scene{
 
         element.on('click', function (event) {
             
-            console.log(parent.playerName)
+            //console.log(parent.playerName)
             if (event.target.name === 'playButton'){
 
-                console.log(parent.playerName)
+                //console.log(parent.playerName)
                 var inputText = this.getChildByName('nameField');
                 if (inputText.value !== ''){
 

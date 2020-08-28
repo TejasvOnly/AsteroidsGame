@@ -198,7 +198,7 @@ export default class GameScene extends Phaser.Scene{
             sprite.disableBody(true,true);
             sprite.state = objState.alive;
         }, this);
-        console.log(this.bulletGroup)
+        //console.log(this.bulletGroup)
 
     }
 
@@ -402,7 +402,7 @@ export default class GameScene extends Phaser.Scene{
             if (this.shipIsInvulnerable) {
                 return;
             }else {
-                console.log("yes");
+                //console.log("yes");
                 this.killMeNow(target); 
                 this.destroyShip();
             }
@@ -428,7 +428,7 @@ export default class GameScene extends Phaser.Scene{
 
     
     PoweredUp(target,/** @type {Phaser.Physics.Arcade.Sprite} */power){
-        console.log(power);
+        //console.log(power);
         this.powerup = powerupType[power.texture.key];
         this.ui_power.setText(graphicAssets.powerups[power.texture.key].display);
 
@@ -451,7 +451,7 @@ export default class GameScene extends Phaser.Scene{
             power.enableBody(true,Math.random() * this.game.canvas.width,Math.random() * this.game.canvas.height,true,true);
             this.time.delayedCall(1000*powerupProperties.despawn,this.killMeNow,[power],this);
         }
-        console.log(chosen);
+        //console.log(chosen);
 
         this.time.delayedCall(1000 * powerupProperties.respawn,this.respawnPowerup,null,this);
     }
@@ -486,7 +486,7 @@ export default class GameScene extends Phaser.Scene{
     shipReady() {
         this.player.visible = true;
         this.shipIsInvulnerable = false;
-        console.log("ready");
+       //console.log("ready");
         
     }
 
@@ -515,7 +515,7 @@ export default class GameScene extends Phaser.Scene{
         if(target.state == objState.alive && target.active){
             target.disableBody(true,true);
         }else{
-            console.log(target,target.texture.key);
+            //console.log(target,target.texture.key);
             target.state = objState.alive;
         }
     }
