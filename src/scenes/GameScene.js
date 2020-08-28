@@ -460,7 +460,7 @@ export default class GameScene extends Phaser.Scene{
         this.shipLives --;
         this.ui_lives.text = this.shipLives;
 
-        if (this.shipLives) {
+        if (this.shipLives>0) {
             this.deathParticles.emitParticleAt(this.player.x,this.player.y,3);
             this.time.delayedCall(1000 * shipProperties.timeToReset, this.shipReset,[],this);
         } else {
@@ -473,17 +473,21 @@ export default class GameScene extends Phaser.Scene{
 
         this.time.delayedCall(1000 * shipProperties.timeToReset+2*shipProperties.blinkDelay, this.shipReady,[],this);
 
-        this.time.addEvent({ delay: 1000 * shipProperties.blinkDelay, callback: this.shipBlink, callbackScope: this, repeat: shipProperties.timeToReset/shipProperties.blinkDelay });
+        this.tweens.add({
+            targets : this.player,
+            duration: 1000 *shipProperties.blinkDelay,
+            ease: 'ease',
+            yoyo: true,
+            repeat: shipProperties.timeToReset/2*shipProperties.blinkDelay + 1,
+            alpha:0
+        })
 
     }
     shipReady() {
         this.player.visible = true;
         this.shipIsInvulnerable = false;
+        console.log("ready");
         
-    }
-
-    shipBlink(){
-        this.player.visible = !this.player.visible;
     }
 
     splitAsteroid(asteroid) {
