@@ -30,8 +30,8 @@ const graphicAssets = {
 
     enemies:{
         station:{URL:'assets/enemy1.png', name:'station'},
-        shuttle:{URL:'assets/enemy1.png', name:'shuttle'},
-        turret:{URL:'assets/enemy1.png', name:'turret'}
+        shuttle:{URL:'assets/enemy2.png', name:'shuttle'},
+        turret:{URL:'assets/enemy3.png', name:'turret'}
     }
 
     
@@ -72,7 +72,7 @@ const asteroidProperties = {
 const enemyProperties = {
     
     respawn:15,
-
+    
     bullet:{
         speed: 500,
         interval: 300,
@@ -268,7 +268,7 @@ export default class GameScene extends Phaser.Scene{
         /** @type {Phaser.Physics.Arcade.Group} */
         this.enemyBulletGroup = this.physics.add.group()
         
-        this.enemyBulletGroup.createMultiple({active:false, quantity:bulletProperties.maxCount, key : graphicAssets.bullet.name});
+        this.enemyBulletGroup.createMultiple({active:false, quantity:100, key : graphicAssets.bullet.name});
         
         this.enemyBulletGroup.getChildren().forEach(function(sprite) {
             sprite.disableBody(true,true);
@@ -288,7 +288,10 @@ export default class GameScene extends Phaser.Scene{
             sprite.state = objState.alive;
         }, this);
 
-        //this.physics.add.overlap(this.player,this.enemyGroup,enemyCollision,null,this);
+        this.physics.add.overlap(this.player,this.enemyGroup,this.enemyCollision,null,this);
+        this.physics.add.overlap(this.player,this.enemyBulletGroup,this.destroyedShip,null,this);
+        this.physics.add.overlap(this.asteroidGroup,this.enemyGroup,this.enemyCollision,null,this);
+        this.physics.add.overlap(this.bulletGroup,this.enemyGroup,this.enemyCollision,null,this);
 
         this.time.delayedCall(2000,this.spawnEnemy,null,this);
 
@@ -457,6 +460,7 @@ export default class GameScene extends Phaser.Scene{
         this.physics.world.wrap(this.bulletGroup,padding);
         this.physics.world.wrap(this.asteroidGroup,padding);
 
+
     }
     asteroidCollision(/** @type {Phaser.Physics.Arcade.Sprite} */target,asteroid){
         
@@ -491,7 +495,28 @@ export default class GameScene extends Phaser.Scene{
         this.destroyParticles.emitParticleAt(asteroid.x,asteroid.y,particleCount);
     } 
 
-    
+    enemyCollision(target,enemy){
+        if(this.asteroidGroup.contains(target)){
+            this.asteroidCollision(enemy,target);
+        }else if(target== this.player){
+            if (this.shipIsInvulnerable) {
+                return;
+            }else {
+                //console.log("yes");
+                this.killMeNow(target); 
+                this.destroyShip();
+                this.killMeNow(enemy);
+            }
+        }else{
+            this.killMeNow(target);
+            target.state = objState.dead;
+            this.killMeNow(enemy);
+        }
+
+        this.updateScore(enemyProperties[enemy.texture.key].score);
+        this.deathParticles.emitParticleAt(enemy.x,enemy.y,enemyProperties[enemy.texture.key].explosion);
+
+    }
     PoweredUp(target,/** @type {Phaser.Physics.Arcade.Sprite} */power){
         //console.log(power);
         this.powerup = powerupType[power.texture.key];
@@ -537,6 +562,7 @@ export default class GameScene extends Phaser.Scene{
         if(chosen<this.enemyGroup.getLength()){
             /** @type {Phaser.Physics.Arcade.Sprite} */
             var enemy = this.enemyGroup.getFirstNth(chosen,false)
+            console.log(enemy);
             var type = enemy.texture.key;
             
             enemy.enableBody(true,x,y,true,true);
@@ -549,22 +575,33 @@ export default class GameScene extends Phaser.Scene{
             var Angle = Phaser.Math.Angle.BetweenPoints(enemy.body.position,{x:this.game.canvas.width/2,y:this.game.canvas.height/2});
 
             this.physics.velocityFromRotation(Angle, randomVelocity, enemy.body.velocity);
+            
 
         }
 
         //console.log(chosen);
 
-        this.time.delayedCall(1000 * powerupProperties.respawn,this.respawnPowerup,null,this);
+        this.time.delayedCall(1000 * enemyProperties.respawn,this.spawnEnemy,null,this);
 
     }
 
     enemyFire(){
 
+        /** @type {Phaser.Physics.Arcade.Sprite} */
         var enemy = this.enemyGroup.getFirst(true);
 
         if(!enemy){
             return;
         }
+        
+
+        if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, enemy.getBounds())){
+            console.log('killed');
+            this.killMeNow(enemy);
+            return;
+        }
+        
+        var type = enemy.texture.key;
 
         if (this.time.now > this.enemyBulletInterval) {
             
@@ -572,39 +609,60 @@ export default class GameScene extends Phaser.Scene{
             var bullet1 = this.enemyBulletGroup.getFirstNth(1,false)
             var bullet2 = this.enemyBulletGroup.getFirstNth(2,false)
             var bullet3 = this.enemyBulletGroup.getFirstNth(3,false)
+            var bullet4 = this.enemyBulletGroup.getFirstNth(4,false)
+
             if (bullet1) {
                 var length = enemy.width * 0.5;
                 var x = enemy.x + (Math.cos(enemy.rotation) * length);
                 var y = enemy.y + (Math.sin(enemy.rotation) * length);
 
+                if(type==graphicAssets.enemies.turret.name){
+                    enemy.rotation = Phaser.Math.Angle.BetweenPoints(enemy.body.position,this.player.body.position);
+                }
 
                 bullet1.enableBody(true,x,y,true,true);
                 bullet1.rotation = enemy.rotation;
                 this.physics.velocityFromRotation(enemy.rotation, enemyProperties.bullet.speed, bullet1.body.velocity);
                 this.time.delayedCall(enemyProperties.bullet.lifeSpan,this.killMeNow,[bullet1],this);
 
-                if(this.powerup == powerupType.triple && bullet2 && bullet2){
+
+
+                if(type!=graphicAssets.enemies.turret.name && bullet2 && bullet3){
                     bullet2.enableBody(true,x,y,true,true);
                     bullet3.enableBody(true,x,y,true,true);
-                    bullet2.rotation = this.player.rotation+15;
-                    bullet3.rotation = this.player.rotation-15;
+                    bullet2.rotation = enemy.rotation+Phaser.Math.DegToRad(90);
+                    bullet3.rotation = enemy.rotation-Phaser.Math.DegToRad(180);
                     
-                    this.physics.velocityFromRotation(this.player.rotation+15, bulletProperties.speed, bullet2.body.velocity);
-                    this.physics.velocityFromRotation(this.player.rotation-15, bulletProperties.speed, bullet3.body.velocity);
+                    this.physics.velocityFromRotation(bullet2.rotation, enemyProperties.bullet.speed, bullet2.body.velocity);
+                    this.physics.velocityFromRotation(bullet3.rotation, enemyProperties.bullet.speed, bullet3.body.velocity);
 
-                    this.time.delayedCall(bulletProperties.lifeSpan,this.killMeNow,[bullet2],this);
-                    this.time.delayedCall(bulletProperties.lifeSpan,this.killMeNow,[bullet3],this);
+                    this.time.delayedCall(enemyProperties.bullet.lifeSpan,this.killMeNow,[bullet2],this);
+                    this.time.delayedCall(enemyProperties.bullet.lifeSpan,this.killMeNow,[bullet3],this);
                 }
                 
-                this.enemyBulletInterval = this.time.now + enemyProperties.bullet.interval;
-                if(this.powerup==powerupType.quantum){
-                    this.enemyBulletInterval+=500;
-                }else if(this.powerup==powerupType.quick){
-                    this.enemyBulletInterval-=200;
+                if(type==graphicAssets.enemies.station.name && bullet4){
+                    bullet4.enableBody(true,x,y,true,true);
+                    bullet4.rotation = enemy.rotation-Phaser.Math.DegToRad(90);;
+                    this.physics.velocityFromRotation(bullet4.rotation, enemyProperties.bullet.speed, bullet4.body.velocity);
+                    this.time.delayedCall(enemyProperties.bullet.lifeSpan,this.killMeNow,[bullet4],this);
                 }
+
+                this.enemyBulletInterval = this.time.now + enemyProperties.bullet.interval;
+                
             }
         }
 
+    }
+
+    destroyedShip(target,bullet){
+        if (this.shipIsInvulnerable) {
+            return;
+        }else {
+            //console.log("yes");
+            this.killMeNow(target); 
+            this.destroyShip();
+            this.killMeNow(bullet);
+        }
     }
 
     destroyShip() {
