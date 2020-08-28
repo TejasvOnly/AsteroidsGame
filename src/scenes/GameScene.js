@@ -562,7 +562,7 @@ export default class GameScene extends Phaser.Scene{
         if(chosen<this.enemyGroup.getLength()){
             /** @type {Phaser.Physics.Arcade.Sprite} */
             var enemy = this.enemyGroup.getFirstNth(chosen,false)
-            console.log(enemy);
+            // console.log(enemy);
             var type = enemy.texture.key;
             
             enemy.enableBody(true,x,y,true,true);
@@ -596,7 +596,7 @@ export default class GameScene extends Phaser.Scene{
         
 
         if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, enemy.getBounds())){
-            console.log('killed');
+            // console.log('killed');
             this.killMeNow(enemy);
             return;
         }
