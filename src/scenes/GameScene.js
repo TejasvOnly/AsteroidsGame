@@ -126,6 +126,8 @@ export default class GameScene extends Phaser.Scene{
         this.ui_score = undefined;
         this.ui_name = undefined;
         this.ui_power = undefined;
+        this.bulletInterval = 0;
+        this.enemyBulletInterval = 0;
         
 	}
 
@@ -133,8 +135,6 @@ export default class GameScene extends Phaser.Scene{
     init(data){
         this.playerName = data.player;
         this.leaderBoard = data.lb;
-        this.bulletInterval = 0;
-        this.enemyBulletInterval = 0;
         this.asteroidsCount = asteroidProperties.startingAsteroids;
         this.shipLives = shipProperties.startingLives;
         this.score = 0;
