@@ -126,11 +126,6 @@ export default class GameScene extends Phaser.Scene{
         this.ui_score = undefined;
         this.ui_name = undefined;
         this.ui_power = undefined;
-        this.bulletInterval = 0;
-        this.enemyBulletInterval = 0;
-        this.asteroidsCount = asteroidProperties.startingAsteroids;
-        this.shipLives = shipProperties.startingLives;
-        this.score = 0;
         
 	}
 
@@ -138,6 +133,11 @@ export default class GameScene extends Phaser.Scene{
     init(data){
         this.playerName = data.player;
         this.leaderBoard = data.lb;
+        this.bulletInterval = 0;
+        this.enemyBulletInterval = 0;
+        this.asteroidsCount = asteroidProperties.startingAsteroids;
+        this.shipLives = shipProperties.startingLives;
+        this.score = 0;
     }
     
     preload(){
@@ -302,7 +302,7 @@ export default class GameScene extends Phaser.Scene{
         this.physics.add.overlap(this.asteroidGroup,this.enemyGroup,this.enemyCollision,null,this);
         this.physics.add.overlap(this.bulletGroup,this.enemyGroup,this.enemyCollision,null,this);
 
-        this.time.delayedCall(2000,this.spawnEnemy,null,this);
+        this.time.delayedCall(1000*enemyProperties.respawn,this.spawnEnemy,null,this);
 
     }
 
