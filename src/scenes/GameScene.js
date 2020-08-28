@@ -180,6 +180,15 @@ export default class GameScene extends Phaser.Scene{
 
     }
 
+    
+    update(){
+
+        this.checkPlayerInput();
+        this.wrapAround();
+        this.enemyFire();
+        
+	}
+
     createPlayer(){
 
         /** @type {Phaser.Physics.Arcade.Sprite} */
@@ -365,15 +374,6 @@ export default class GameScene extends Phaser.Scene{
         });
 
     }
-    update(){
-
-        this.checkPlayerInput();
-        this.wrapAround();
-        this.enemyFire();
-        
-
-        
-	}
 
     checkPlayerInput(){
         
